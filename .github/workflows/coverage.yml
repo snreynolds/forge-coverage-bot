@@ -1,7 +1,9 @@
-name: coverage
+name: code coverage
 
-on: pull_request
-
+on: 
+  pull_request:
+    branches:
+    - main
 
 jobs:
   comment-forge-coverage:
@@ -43,9 +45,10 @@ jobs:
           const output = `${{ steps.coverage.outputs.COVERAGE }}`;
           const index = output.indexOf('|');
           const parsed = output.slice(index);
+          const commentBody = `Forge code coverage:\n\`\`\`\n${parsed}\n\`\`\``;
           github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: parsed
+              body: commentBody
             });
