@@ -27,8 +27,11 @@ jobs:
       id: build
     - name: Run forge coverage
       id: coverage
-      run: |
-          forge coverage | grep -v 'test/'
+      uses: actions/github-script@v7
+      with:
+        script: |
+          forge coverage | grep -v 'test/'`
+        result-encoding: string
           
     - name: Comment on PR
       id: comment
