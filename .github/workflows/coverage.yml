@@ -1,0 +1,43 @@
+name: coverage
+
+on: pull_request
+
+
+jobs:
+  comment-forge-coverage:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Install foundry
+      uses: foundry-rs/foundry-toolchain@v1
+      with:
+          version: nightly
+    - name: Run Forge build
+        run: |
+          forge --version
+          forge build --sizes
+        id: build
+    - name: Run forge coverage
+        run: |
+          forge coverage
+        id: coverage
+    - name: Comment on PR
+      id: comment
+      uses: actions/github-script@v4
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        script: |
+            let fs = require('fs');
+            let issue_number = Number(fs.readFileSync('./pr_number'));
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issue_number,
+              body: 'hi!'
+            });
+
