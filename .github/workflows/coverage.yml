@@ -21,11 +21,11 @@ jobs:
       run: |
           forge --version
           forge build --sizes
-        id: build
+      id: build
     - name: Run forge coverage
       run: |
           forge coverage
-        id: coverage
+      id: coverage
     - name: Comment on PR
       id: comment
       uses: actions/github-script@v4
