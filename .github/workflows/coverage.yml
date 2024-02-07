@@ -26,21 +26,25 @@ jobs:
           forge build --sizes
       id: build
     - name: Run forge coverage
-      run: |
-          forge coverage | grep -v 'test/' > coverage.txt
       id: coverage
+      run: |
+          forge coverage | grep -v 'test/'
+          
     - name: Comment on PR
       id: comment
-      uses: actions/github-script@v4
+      uses: actions/github-script@v5
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         script: |
-          let output = cat('coverage.txt');
+          const output = `${{ steps.coverage.outputs.result }}`;
             github.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: output
+            issue_number: issue_number,
+            body: commentBody
             });
+          
+        
             
 
