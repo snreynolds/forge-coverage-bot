@@ -18,12 +18,12 @@ jobs:
       with:
           version: nightly
     - name: Run Forge build
-        run: |
+      run: |
           forge --version
           forge build --sizes
         id: build
     - name: Run forge coverage
-        run: |
+      run: |
           forge coverage
         id: coverage
     - name: Comment on PR
