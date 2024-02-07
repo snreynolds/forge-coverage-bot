@@ -34,13 +34,12 @@ jobs:
       uses: actions/github-script@v4
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
-        script: |
-            let fs = require('fs');
-            let issue_number = Number(fs.readFileSync('./pr_number'));
-            await github.rest.issues.createComment({
+        script: | 
+            github.issues.createComment({
+              issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              issue_number: issue_number,
-              body: 'hi!'
+              body: 'yooo!'
             });
+            
 
