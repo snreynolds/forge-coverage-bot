@@ -27,11 +27,8 @@ jobs:
       id: build
     - name: Run forge coverage
       id: coverage
-      uses: actions/github-script@v7
-      with:
-        script: |
+      run: |
           forge coverage | grep -v 'test/'`
-        result-encoding: string
           
     - name: Comment on PR
       id: comment
@@ -39,7 +36,7 @@ jobs:
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         script: |
-          const output = `${{ steps.coverage.outputs.result }}`;
+          const output = `${{ steps.coverage.outputs.stdout }}`;
           github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
