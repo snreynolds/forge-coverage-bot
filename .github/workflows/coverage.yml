@@ -77,11 +77,12 @@ jobs:
               comment_id: botComment.id,
               body: commentBody
             })
-          }
-          
-          github.rest.issues.createComment({
+          } else {
+            github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
               body: commentBody
             });
+          }
+          
