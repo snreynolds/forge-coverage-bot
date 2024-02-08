@@ -32,9 +32,24 @@ jobs:
       run: |
         {
         echo 'COVERAGE<<EOF'
-        forge coverage | grep -v 'test/'
+        forge coverage | grep -v 'test/' | tail -n +6
         echo EOF
         } >> "$GITHUB_OUTPUT"
+    
+    - name: Check coverage is updated
+      uses: actions/github-script@v5
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        script: |
+          const fs = require('fs');
+          const currentCoverage = fs.readFileSync("coverage.txt", "utf8").trim();
+          if (currentCoverage.length == 0) {
+            return
+          }
+          const newCoverage = (`${{ steps.coverage.outputs.COVERAGE }}`).trim();
+          if (newCoverage != currentCoverage) {
+            core.setFailed(`Code coverage not updated. Run : forge coverage | grep -v 'test/' | tail -n +6`);
+          }
 
     - name: Comment on PR
       id: comment
@@ -43,9 +58,7 @@ jobs:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         script: |
           const output = `${{ steps.coverage.outputs.COVERAGE }}`;
-          const index = output.indexOf('|');
-          const parsed = output.slice(index);
-          const commentBody = `Forge code coverage:\n${parsed}\n`;
+          const commentBody = `Forge code coverage:\n${output}\n`;
           github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
