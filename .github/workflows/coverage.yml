@@ -59,8 +59,26 @@ jobs:
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         script: |
+          const {data: comments} = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number, 
+            })
+
+          const botComment = comments.find(comment => comment.user.id === 41898282)
+
           const output = `${{ steps.coverage.outputs.COVERAGE }}`;
           const commentBody = `Forge code coverage:\n${output}\n`;
+
+          if (botComment) {
+            github.rest.issues.updateComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              comment_id: botComment.id,
+              body: commentBody
+            })
+          }
+          
           github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
