@@ -42,10 +42,12 @@ jobs:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         script: |
           const fs = require('fs');
-          const currentCoverage = fs.readFileSync("coverage.txt", "utf8").trim();
-          if (currentCoverage.length == 0) {
+          const file = "coverage.txt"
+          if(!fs.existsSync(file)) {
+            console.log("Nothing to check");
             return
           }
+          const currentCoverage = fs.readFileSync(file, "utf8").trim();
           const newCoverage = (`${{ steps.coverage.outputs.COVERAGE }}`).trim();
           if (newCoverage != currentCoverage) {
             core.setFailed(`Code coverage not updated. Run : forge coverage | grep -v 'test/' | tail -n +6`);
